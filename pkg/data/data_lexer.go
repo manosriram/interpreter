@@ -3,7 +3,7 @@ package data
 type TOKEN_TYPE int32
 
 const (
-	LEFT_PARAM TOKEN_TYPE = iota
+	LEFT_PAREN TOKEN_TYPE = iota
 	RIGHT_PAREN
 	LEFT_BRACE
 	RIGHT_BRACE
@@ -19,7 +19,7 @@ const (
 	BANG
 	BANG_EQUAL
 	EQUAL
-	EQUAL_EQUA
+	EQUAL_EQUAL
 	GREATER
 	GREATER_EQUAL
 	LESS
@@ -28,8 +28,7 @@ const (
 	// Literals.
 	IDENTIFIER
 	STRING
-	NUMBER_INTEGER
-	NUMBER_DOUBLE
+	NUMBER
 
 	// Keywords.
 	AND
@@ -56,12 +55,14 @@ type Token struct {
 	Tp      TOKEN_TYPE
 	Lexeme  string
 	Literal interface{}
+	Line    int32
 }
 
-func NewToken(tp TOKEN_TYPE, lexeme string, literal interface{}) *Token {
+func NewToken(tp TOKEN_TYPE, lexeme string, literal interface{}, line int32) *Token {
 	return &Token{
 		Tp:      tp,
 		Lexeme:  lexeme,
 		Literal: literal,
+		Line:    line,
 	}
 }
