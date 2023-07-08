@@ -51,6 +51,25 @@ const (
 	END_OF_FILE
 )
 
+var ReservedTokenMap map[string]TOKEN_TYPE = map[string]TOKEN_TYPE{
+	"and":    AND,
+	"class":  CLASS,
+	"else":   ELSE,
+	"false":  FALSE,
+	"fun":    FUN,
+	"for":    FOR,
+	"if":     IF,
+	"nil":    NIL,
+	"or":     OR,
+	"print":  PRINT,
+	"return": RETURN,
+	"super":  SUPER,
+	"this":   THIS,
+	"true":   TRUE,
+	"var":    VAR,
+	"while":  WHILE,
+}
+
 type Token struct {
 	Tp      TOKEN_TYPE
 	Lexeme  string
