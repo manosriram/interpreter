@@ -32,7 +32,36 @@ func main() {
 		}
 	}
 
-	for _, t := range global_ctx.Ctx.Tokens {
-		fmt.Printf("%d -> %s -> %d -> %v -> literal_type(%T)\n", t.Tp, t.Lexeme, t.Line, t.Literal, t.Literal)
+	b := core.Binary{
+		Left: &core.Unary{
+			Operator: data.Token{
+				Tp:      data.MINUS,
+				Lexeme:  "-",
+				Literal: nil,
+				Line:    1,
+			},
+			Right: &core.Literal{
+				Value: "123",
+			},
+		},
+		Operator: data.Token{
+			Tp:      data.STAR,
+			Lexeme:  "*",
+			Literal: nil,
+			Line:    1,
+		},
+		Right: &core.Grouping{
+			Expression: &core.Literal{
+				Value: "45.67",
+			},
+		},
 	}
+
+	fmt.Println(core.PrintExpr(&b))
+
+	// b.VisitBinaryExpr(b)
+
+	// for _, t := range global_ctx.Ctx.Tokens {
+	// fmt.Printf("%d -> %s -> %d -> %v -> literal_type(%T)\n", t.Tp, t.Lexeme, t.Line, t.Literal, t.Literal)
+	// }
 }

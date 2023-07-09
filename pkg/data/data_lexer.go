@@ -31,7 +31,7 @@ const (
 	NUMBER
 
 	// Keywords.
-	AND
+	AND // 22
 	CLASS
 	ELSE
 	FALSE
@@ -46,7 +46,7 @@ const (
 	THIS
 	TRUE
 	VAR
-	WHILE
+	WHILE // 37
 
 	END_OF_FILE
 )
