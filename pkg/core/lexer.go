@@ -45,7 +45,7 @@ func is_alpha(c string) bool {
 }
 
 func is_digit(c string) bool {
-	return c >= "1" && c <= "9"
+	return c >= "0" && c <= "9"
 }
 
 func typeof(c interface{}) string {

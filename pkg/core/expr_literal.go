@@ -1,16 +1,20 @@
 package core
 
+import "fmt"
+
 type Literal struct {
 	Value interface{}
 }
 
-func (l Literal) VisitLiteralExpr(expr Literal) interface{} {
-	if expr.Value == nil {
+func (l Literal) VisitLiteralExpr() string {
+	if l.Value == nil {
 		return "nil"
 	}
-	return expr.Value
+
+	v := fmt.Sprint(l.Value)
+	return v
 }
 
 func (l Literal) Accept() interface{} {
-	return l.VisitLiteralExpr(l)
+	return l.VisitLiteralExpr()
 }

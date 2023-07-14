@@ -9,7 +9,7 @@ type Unary struct {
 	Right    Expr
 }
 
-func (u Unary) VisitUnaryExpr(expr Unary) interface{} {
+func (u Unary) VisitUnaryExpr(expr Unary) string {
 	return Parenthesize(expr.Operator.Lexeme, expr.Right)
 }
 

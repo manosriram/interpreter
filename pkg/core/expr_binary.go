@@ -10,7 +10,7 @@ type Binary struct {
 	Right    Expr
 }
 
-func (b Binary) VisitBinaryExpr(expr Binary) interface{} {
+func (b Binary) VisitBinaryExpr(expr Binary) string {
 	return Parenthesize(expr.Operator.Lexeme, expr.Left, expr.Right)
 }
 

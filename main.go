@@ -31,33 +31,44 @@ func main() {
 			log.Fatal("error compiling source file")
 		}
 	}
+	core.AddToken(data.END_OF_FILE, nil, global_ctx)
 
-	b := core.Binary{
-		Left: &core.Unary{
-			Operator: data.Token{
-				Tp:      data.MINUS,
-				Lexeme:  "-",
-				Literal: nil,
-				Line:    1,
-			},
-			Right: &core.Literal{
-				Value: "123",
-			},
-		},
-		Operator: data.Token{
-			Tp:      data.STAR,
-			Lexeme:  "*",
-			Literal: nil,
-			Line:    1,
-		},
-		Right: &core.Grouping{
-			Expression: &core.Literal{
-				Value: "45.67",
-			},
-		},
+	for _, x := range i_ctx.Tokens {
+		fmt.Println(x.Tp)
 	}
 
-	fmt.Println(core.PrintExpr(&b))
+	p := core.NewParser(global_ctx.Ctx.Tokens, int32(len(global_ctx.Ctx.Tokens)))
+	expr := p.Parse()
+	fmt.Println(expr)
+
+	// b := core.Binary{
+	// Left: &core.Unary{
+	// Operator: data.Token{
+	// Tp:      data.MINUS,
+	// Lexeme:  "-",
+	// Literal: nil,
+	// Line:    1,
+	// },
+	// Right: &core.Literal{
+	// Value: "123",
+	// },
+	// },
+	// Operator: data.Token{
+	// Tp:      data.STAR,
+	// Lexeme:  "*",
+	// Literal: nil,
+	// Line:    1,
+	// },
+	// Right: &core.Grouping{
+	// Expression: &core.Literal{
+	// Value: 45.67,
+	// },
+	// },
+	// }
+
+	// // fmt.Println(l.Accept())
+
+	// fmt.Println(core.PrintExpr(expr))
 
 	// b.VisitBinaryExpr(b)
 

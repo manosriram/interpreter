@@ -2,6 +2,7 @@ package core
 
 import (
 	"bytes"
+	"fmt"
 )
 
 func PrintExpr(e Expr) string {
@@ -14,7 +15,8 @@ func PrintExpr(e Expr) string {
 		if t.Value == nil {
 			return "nil"
 		}
-		return t.Value.(string)
+		v := fmt.Sprint(t.Value)
+		return v
 	case *Grouping:
 		return Parenthesize("group", t.Expression)
 	default:
@@ -25,15 +27,14 @@ func PrintExpr(e Expr) string {
 func Parenthesize(name string, exprs ...Expr) string {
 	buf := bytes.Buffer{}
 
-	buf.Write([]byte("("))
-	buf.Write([]byte(name))
+	buf.WriteString("(")
+	buf.WriteString(name)
 
 	for _, v := range exprs {
-		buf.Write([]byte(" "))
-		buf.Write([]byte(v.Accept().([]byte)))
-		// buf.Write([]byte(PrintExpr(v)))
+		buf.WriteString(" ")
+		buf.WriteString(v.Accept().(string))
 	}
 
-	buf.Write([]byte(")"))
+	buf.WriteString(")")
 	return buf.String()
 }
