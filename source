@@ -1,1 +1,7 @@
-1 + 123 / 123
+let x = "mano";
+
+fn mano(x, y) {
+		return x+y;
+}
+
+let y = 123;
