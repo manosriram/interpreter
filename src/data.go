@@ -3,23 +3,23 @@ package src
 type TOKEN_TYPE string
 type LEX_TYPE string
 
-type Context struct {
+type Lexer struct {
+	Input   string
 	Start   int32
 	Current int32
-	Line    int32
-	Tokens  []*Token
-	Type    LEX_TYPE
+	Ch      byte
 
-	F *File
+	TokenPosition int32
+	Tokens        []*Token
 }
 
-func NewContext(F *File) *Context {
-	return &Context{
-		Start:   0,
-		Current: 0,
-		Line:    1,
-		Tokens:  make([]*Token, 0),
-		F:       F,
+func NewLexer(input string) *Lexer {
+	return &Lexer{
+		Input:         input,
+		Start:         0,
+		Current:       0,
+		TokenPosition: 0,
+		Tokens:        make([]*Token, 0),
 	}
 }
 
@@ -74,17 +74,13 @@ var Keywords map[string]TOKEN_TYPE = map[string]TOKEN_TYPE{
 }
 
 type Token struct {
-	Type    TOKEN_TYPE
-	Lexeme  string
-	Literal interface{}
-	Line    int32
+	Type  TOKEN_TYPE
+	Value string
 }
 
-func NewToken(tp TOKEN_TYPE, lexeme string, literal interface{}, line int32) *Token {
+func NewToken(tp TOKEN_TYPE, value string) *Token {
 	return &Token{
-		Type:    tp,
-		Lexeme:  lexeme,
-		Literal: literal,
-		Line:    line,
+		Type:  tp,
+		Value: value,
 	}
 }

@@ -2,20 +2,20 @@ package src
 
 import "fmt"
 
-func advance(ctx *Context) {
-	ctx.Current++
+func (l *Lexer) Advance() {
+	l.Current++
 }
 
-func peek(ctx *Context) string {
-	return string(ctx.F.D[ctx.Current])
+func (l *Lexer) peek() string {
+	return string(l.Input[l.Current])
 }
 
-func peek_next(ctx *Context) string {
-	return string(ctx.F.D[ctx.Current+1])
+func (l *Lexer) peek_next() string {
+	return string(l.Input[l.Current+1])
 }
 
-func is_end(ctx *Context) bool {
-	return int64(ctx.Current) >= ctx.F.Size-1
+func (l *Lexer) is_end() bool {
+	return l.Current >= int32(len(l.Input))
 }
 
 func is_alpha(c string) bool {
@@ -34,8 +34,8 @@ func is_alpha_numeric(c string) bool {
 	return is_alpha(c) || is_digit(c)
 }
 
-func PrintTokens(tokens []*Token) {
-	for _, x := range tokens {
-		fmt.Printf("%s %s\n", x.Lexeme, x.Type)
+func (l *Lexer) PrintTokens() {
+	for _, x := range l.Tokens {
+		fmt.Printf("%s %v\n", x.Type, x.Value)
 	}
 }

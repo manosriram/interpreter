@@ -32,17 +32,22 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ctx := src.NewContext(f)
+	l := src.NewLexer(string(f.D))
 
 	for i := 0; i < int(f.Size)-1; i++ {
 		// fmt.Printf("-> %d ->", ctx.Start)
-		ctx.Start = ctx.Current
-		ok := src.Match(ctx)
+		l.Start = l.Current
+		ok := l.Match()
 		if !ok {
 			log.Fatal("error compiling source file")
 		}
 	}
-	src.AddToken(src.EOF, nil, ctx)
+	l.AddToken(src.EOF)
 
-	src.PrintTokens(ctx.Tokens)
+	// l.PrintTokens()
+
+	p := src.NewParser(l)
+	program := p.ParseProgram()
+	program.PrintStatements()
+	// fmt.Println(program.String())
 }

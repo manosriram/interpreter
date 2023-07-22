@@ -8,14 +8,14 @@ import (
 )
 
 type Repl struct {
-	Line string
-	Ctx  *Context
+	Line  string
+	Lexer *Lexer
 }
 
-func NewRepl(line string, Ctx *Context) *Repl {
+func NewRepl(line string, L *Lexer) *Repl {
 	return &Repl{
-		Line: line,
-		Ctx:  Ctx,
+		Line:  line,
+		Lexer: L,
 	}
 }
 
@@ -31,17 +31,18 @@ func StartRepl() {
 			log.Fatal(err)
 		}
 
-		repl := NewRepl(line, &Context{Type: "REPL", F: &File{D: []byte(line), Size: int64(len(line))}})
+		repl := NewRepl(line, &Lexer{Input: line})
 
 		for i := 0; i < len(line); i++ {
-			repl.Ctx.Start = repl.Ctx.Current
-			ok := Match(repl.Ctx)
+			repl.Lexer.Start = repl.Lexer.Current
+			ok := repl.Lexer.Match()
 			if !ok {
-				log.Fatal(fmt.Sprintf("error at %d\n", repl.Ctx.Line))
+				log.Fatal("error parsing line")
+				// log.Fatal(fmt.Sprintf("error at %d\n", repl.Ctx.Line))
 			}
 		}
-		AddToken(EOF, nil, repl.Ctx)
+		repl.Lexer.AddToken(EOF)
 
-		PrintTokens(repl.Ctx.Tokens)
+		repl.Lexer.PrintTokens()
 	}
 }

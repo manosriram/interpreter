@@ -1,149 +1,156 @@
 package src
 
-import (
-	"strconv"
-)
+func (l *Lexer) PeekNextToken() *Token {
+	if l.Tokens[l.TokenPosition].Type == EOF {
+		return nil
+	}
+	next := l.Tokens[l.TokenPosition+1]
+	l.TokenPosition++
+	return next
+}
 
-func AddToken(token_type TOKEN_TYPE, literal interface{}, ctx *Context) bool {
-	d := string(ctx.F.D)
-	lt := literal
+func (l *Lexer) PeekToken() *Token {
+	return l.Tokens[l.TokenPosition]
+}
 
+func (l *Lexer) AddToken(token_type TOKEN_TYPE) bool {
 	var lexeme string
 	if token_type == STRING {
-		lexeme = d[ctx.Start+1 : ctx.Current]
+		lexeme = l.Input[l.Start+1 : l.Current]
 	} else {
-		lexeme = d[ctx.Start:ctx.Current]
+		lexeme = l.Input[l.Start:l.Current]
 	}
 
-	t := NewToken(token_type, lexeme, lt, ctx.Line)
+	t := NewToken(token_type, lexeme)
 
-	ctx.Tokens = append(ctx.Tokens, t)
+	l.Tokens = append(l.Tokens, t)
 	return true
 }
 
-func identifier(c string, ctx *Context) {
-	for !is_end(ctx) && is_alpha_numeric(peek(ctx)) {
-		advance(ctx)
+func (l *Lexer) identifier(c string) {
+	for !l.is_end() && is_alpha_numeric(l.peek()) {
+		l.Advance()
 	}
 
-	lexeme := string(ctx.F.D[ctx.Start:ctx.Current])
+	lexeme := string(l.Input[l.Start:l.Current])
 	v, ok := Keywords[lexeme]
 
 	if ok {
-		AddToken(v, nil, ctx)
+		l.AddToken(v)
 	} else {
-		AddToken(IDENT, nil, ctx)
+		l.AddToken(IDENT)
 	}
 }
 
-func Match(ctx *Context) bool {
-	if is_end(ctx) {
+func (l *Lexer) Match() bool {
+	if l.is_end() {
 		return true
 	}
 
-	char_c := string(ctx.F.D[ctx.Current])
-	advance(ctx)
+	l.Ch = byte(l.Input[l.Current])
+	char_c := string(l.Ch)
+	l.Advance()
 
 	switch char_c {
 	case "\n":
-		ctx.Line++
+		// ctx.Line++
 		return true
 	case " ", "\r", "\t":
 		return true
 	case "(":
-		AddToken(LEFT_PAREN, nil, ctx)
+		l.AddToken(LEFT_PAREN)
 		return true
 	case ")":
-		AddToken(RIGHT_PAREN, nil, ctx)
+		l.AddToken(RIGHT_PAREN)
 		return true
 	case "{":
-		AddToken(LEFT_BRACE, nil, ctx)
+		l.AddToken(LEFT_BRACE)
 		return true
 	case "}":
-		AddToken(RIGHT_BRACE, nil, ctx)
+		l.AddToken(RIGHT_BRACE)
 		return true
 	case ",":
-		AddToken(COMMA, nil, ctx)
+		l.AddToken(COMMA)
 		return true
 	case ".":
-		AddToken(DOT, nil, ctx)
+		l.AddToken(DOT)
 		return true
 	case "-":
-		AddToken(MINUS, nil, ctx)
+		l.AddToken(MINUS)
 		return true
 	case "+":
-		AddToken(PLUS, nil, ctx)
+		l.AddToken(PLUS)
 		return true
 	case ";":
-		AddToken(SEMICOLON, nil, ctx)
+		l.AddToken(SEMICOLON)
 		return true
 	case "*":
-		AddToken(STAR, nil, ctx)
+		l.AddToken(STAR)
 		return true
 	case "=":
-		if peek(ctx) == "=" {
-			AddToken(EQUAL_EQUAL, nil, ctx)
-			advance(ctx)
+		if l.peek() == "=" {
+			l.AddToken(EQUAL_EQUAL)
+			l.Advance()
 			return true
 		} else {
-			AddToken(EQUAL, nil, ctx)
+			l.AddToken(EQUAL)
 			return true
 		}
 	case ">":
-		if peek(ctx) == "=" {
-			AddToken(GREATER_EQUAL, nil, ctx)
-			advance(ctx)
+		if l.peek() == "=" {
+			l.AddToken(GREATER_EQUAL)
+			l.Advance()
 			return true
 		} else {
-			AddToken(GREATER, nil, ctx)
+			l.AddToken(GREATER)
 			return true
 		}
 	case "<":
-		if peek(ctx) == "=" {
-			AddToken(LESS_EQUAL, nil, ctx)
-			advance(ctx)
+		if l.peek() == "=" {
+			l.AddToken(LESS_EQUAL)
+			l.Advance()
 			return true
 		} else {
-			AddToken(LESS, nil, ctx)
+			l.AddToken(LESS)
 			return true
 		}
 	case "/":
-		if peek(ctx) == "/" {
-			for !is_end(ctx) && peek(ctx) != "\n" {
-				advance(ctx)
+		if l.peek() == "/" {
+			for !l.is_end() && l.peek() != "\n" {
+				l.Advance()
 			}
-			advance(ctx)
-			ctx.Line++
+			l.Advance()
+			// ctx.Line++
 			return true
 		} else {
-			AddToken(SLASH, nil, ctx)
+			l.AddToken(SLASH)
 			return true
 		}
 	case "\"":
-		for !is_end(ctx) && peek(ctx) != "\"" {
-			advance(ctx)
+		for !l.is_end() && l.peek() != "\"" {
+			l.Advance()
 		}
-		if is_end(ctx) {
+		if l.is_end() {
 			return false
 		}
 
 		// lit := g.F.D[i_ctx.Start:i_ctx.Current]
-		AddToken(STRING, ctx.F.D[ctx.Start:ctx.Current], ctx)
-		advance(ctx)
+		l.AddToken(STRING)
+		l.Advance()
 		return true
 
 	default:
-		if is_digit(char_c) {
-			for !is_end(ctx) && is_digit(peek(ctx)) {
-				advance(ctx)
-			}
-			int_value, _ := strconv.ParseInt(string(ctx.F.D[ctx.Start:ctx.Current]), 0, 32)
-			AddToken(INT, int_value, ctx)
-			return true
-		} else if is_alpha(char_c) {
-			identifier(char_c, ctx)
-			return true
-		}
+		// if is_digit(char_c) {
+		// for !l.is_end() && is_digit(l.peek()) {
+		// l.Advance()
+		// }
+		// int_value, _ := strconv.ParseInt(string(ctx.F.D[ctx.Start:ctx.Current]), 0, 32)
+		// l.AddToken(INT)
+		// return true
+		// } else if is_alpha(char_c) {
+		l.identifier(char_c)
+		return true
+		// }
 
 		return false
 	}
